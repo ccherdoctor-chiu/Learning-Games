@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 時鐘學習大挑戰02 - 超能力霸王收集版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive, Arial, sans-serif;
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 50%, #74b9ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            text-align: center;
+            color: #2d3436;
+            border: 3px solid #ffeaa7;
+        }
+        
+        h1 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(255, 234, 167, 0.3);
+            background: linear-gradient(45deg, #e17055, #fd79a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            border-radius: 15px;
+            color: white;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .score-item {
+            font-size: 1.3em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .clocks-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .clock-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .clock-label {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #e17055, #fd79a8);
+            color: white;
+            border-radius: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .clock-canvas {
+            border: 4px solid #ffeaa7;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .time-display {
+            margin: 15px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            border: 2px solid #ffeaa7;
+        }
+        
+        .question-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            border-radius: 20px;
+            color: white;
+            border: 3px solid #ffeaa7;
+        }
+        
+        .question-section h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .time-inputs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        .time-input {
+            padding: 12px 18px;
+            border: 3px solid #ffeaa7;
+            border-radius: 15px;
+            font-size: 1.6em;
+            width: 120px;
+            text-align: center;
+            font-weight: bold;
+            background: white;
+            color: #2d3436;
+        }
+        
+        .time-input:focus {
+            outline: none;
+            border-color: #e17055;
+            box-shadow: 0 0 15px rgba(225, 112, 85, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .time-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffeaa7;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 30px;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 25px 15px;
+            border: 3px solid #ffeaa7;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 184, 148, 0.4);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, #e17055, #fd79a8);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 30px;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 25px 15px;
+            border: 3px solid #ffeaa7;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(225, 112, 85, 0.4);
+        }
+        
+        .feedback {
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.4em;
+            font-weight: bold;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid;
+        }
+        
+        .correct {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            border-color: #ffeaa7;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .incorrect {
+            background: linear-gradient(135deg, #e17055, #fd79a8);
+            color: white;
+            border-color: #ffeaa7;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .ultraman-reward {
+            margin: 25px 0;
+            animation: heroAppear 0.8s ease;
+        }
+        
+        .ultraman-character {
+            font-size: 5em;
+            margin: 15px;
+            animation: heroPower 2s infinite;
+            text-shadow: 0 0 20px rgba(255, 234, 167, 0.8);
+        }
+        
+        .collected-ultramen {
+            margin: 25px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #2d3436, #636e72);
+            border-radius: 20px;
+            color: white;
+            border: 3px solid #ffeaa7;
+        }
+        
+        .collected-ultramen h3 {
+            color: #ffeaa7;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .ultraman-collection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        
+        .ultraman-badge {
+            font-size: 2.5em;
+            padding: 15px;
+            background: linear-gradient(135deg, #e17055, #fd79a8);
+            border-radius: 50%;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            animation: ultramanGlow 0.8s ease;
+            transition: transform 0.3s ease;
+            border: 3px solid #ffeaa7;
+            text-shadow: 0 0 15px rgba(255, 234, 167, 0.8);
+        }
+        
+        .ultraman-badge:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+        
+        .progress-bar {
+            margin: 20px 0;
+            background: #636e72;
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00b894, #00cec9, #74b9ff);
+            transition: width 0.8s ease;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 184, 148, 0.5);
+        }
+        
+        .final-screen {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #2d3436, #636e72);
+            border-radius: 20px;
+            color: white;
+            border: 3px solid #ffeaa7;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            color: #2d3436;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 30px;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 25px;
+            border: 3px solid #e17055;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 234, 167, 0.4);
+        }
+        
+        /* 超能力霸王主題動畫 */
+        @keyframes heroAppear {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+        
+        @keyframes heroPower {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.5); }
+        }
+        
+        @keyframes ultramanGlow {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.5); 
+                box-shadow: 0 0 0 rgba(255, 234, 167, 0); 
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: scale(1.2); 
+                box-shadow: 0 0 30px rgba(255, 234, 167, 0.8); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1); 
+                box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .clocks-container {
+                flex-direction: column;
+            }
+            
+            .score-board {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .time-inputs {
+                flex-direction: column;
+            }
+        }
+        
+        /* 特殊奧特曼效果 */
+        .special-effect {
+            position: absolute;
+            pointer-events: none;
+            font-size: 3em;
+            animation: specialBlast 1.5s ease-out forwards;
+            z-index: 1000;
+        }
+        
+        @keyframes specialBlast {
+            0% { 
+                transform: scale(0) rotate(0deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(2) rotate(180deg); 
+                opacity: 0.8; 
+            }
+            100% { 
+                transform: scale(4) rotate(360deg); 
+                opacity: 0; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🤖 時鐘學習大挑戰02 - 超能力霸王收集版</h1>
+        
+        <div class="score-board">
+            <div class="score-item">題目: <span id="currentQuestion">1</span>/20</div>
+            <div class="score-item">答對: <span id="correctCount">0</span></div>
+            <div class="score-item">超能力霸王收集: <span id="ultramanCount">0</span></div>
+        </div>
+        
+        <div id="gameScreen">
+            <div class="clocks-container">
+                <div class="clock-section">
+                    <div class="clock-label">🕐 時間A (開始時間)</div>
+                    <canvas id="clockA" class="clock-canvas" width="250" height="250"></canvas>
+                    <div id="timeDisplayA" class="time-display">🕐 請仔細觀察時鐘</div>
+                </div>
+                
+                <div class="clock-section">
+                    <div class="clock-label">🕑 時間B (結束時間)</div>
+                    <canvas id="clockB" class="clock-canvas" width="250" height="250"></canvas>
+                    <div id="timeDisplayB" class="time-display">🕑 請仔細觀察時鐘</div>
+                </div>
+            </div>
+            
+            <div class="question-section">
+                <h3>⚡ 挑戰任務：仔細觀察兩個時鐘，計算從時間A到時間B需要多長時間？</h3>
+                <p style="color: #ffeaa7; font-size: 1.1em; margin: 10px 0;">
+                    🔍 提示：先讀出兩個時鐘的時間，再計算時間差
+                </p>
+                <div class="time-inputs">
+                    <div class="time-label">小時</div>
+                    <input type="text" id="hourInput" class="time-input" maxlength="2" placeholder="時">
+                    <div class="time-label">分鐘</div>
+                    <input type="text" id="minuteInput" class="time-input" maxlength="2" placeholder="分">
+                </div>
+                <button onclick="checkAnswer()" class="submit-btn">🚀 提交答案</button>
+            </div>
+            
+            <div id="feedback" class="feedback"></div>
+            
+            <div id="ultramanReward" class="ultraman-reward hidden"></div>
+            
+            <button id="nextBtn" onclick="nextQuestion()" class="next-btn hidden">下一題 ⚡</button>
+        </div>
+        
+        <div id="finalScreen" class="final-screen hidden">
+            <h2>🎉 恭喜完成超能力霸王時鐘挑戰！</h2>
+            <p>總共答對了 <span id="finalScore"></span> 題</p>
+            <p>收集了 <span id="finalUltramen"></span> 位超能力霸王英雄！</p>
+            <div id="finalMessage" style="margin: 25px 0; font-size: 1.3em;"></div>
+            <button onclick="restartGame()" class="restart-btn">🔄 重新挑戰</button>
+        </div>
+        
+        <div class="collected-ultramen">
+            <h3>🤖 超能力霸王英雄收集進度：<span id="progressText">0/20</span></h3>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="ultramanCollection" class="ultraman-collection"></div>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態
+        let currentQuestion = 1;
+        let correctCount = 0;
+        let timeA = { hour: 0, minute: 0 };
+        let timeB = { hour: 0, minute: 0 };
+        let correctDifference = { hours: 0, minutes: 0 };
+        let collectedUltramen = [];
+        
+        // 超能力霸王英雄列表 - 20位不同的超能力霸王
+        const ultramanHeroes = [
+            '🤖', '👽', '🛸', '⚡', '🔥', 
+            '✨', '💫', '🌟', '💥', '🔮', 
+            '🚀', '🛡️', '⚔️', '🎯', '💎', 
+            '🌈', '❄️', '🌪️', '🌊', '⚛️'
+        ];
+        
+        // 初始化遊戲
+        function initGame() {
+            generateNewTimes();
+            drawClocks();
+            showTimeTips();
+            updateDisplay();
+        }
+        
+        // 生成新的隨機時間
+        function generateNewTimes() {
+            // 生成時間A
+            timeA.hour = Math.floor(Math.random() * 12) + 1;
+            timeA.minute = Math.floor(Math.random() * 12) * 5;
+            
+            // 生成時間B (確保B在A之後)
+            let minMinutesLater = 15; // 最少15分鐘後
+            let maxMinutesLater = 480; // 最多8小時後
+            let minutesLater = Math.floor(Math.random() * (maxMinutesLater - minMinutesLater + 1)) + minMinutesLater;
+            
+            let totalMinutesA = timeA.hour * 60 + timeA.minute;
+            let totalMinutesB = totalMinutesA + minutesLater;
+            
+            // 如果超過24小時，調整到下一天
+            if (totalMinutesB >= 24 * 60) {
+                totalMinutesB = totalMinutesB % (24 * 60);
+            }
+            
+            timeB.hour = Math.floor(totalMinutesB / 60);
+            if (timeB.hour === 0) timeB.hour = 12;
+            if (timeB.hour > 12) timeB.hour = timeB.hour - 12;
+            
+            timeB.minute = totalMinutesB % 60;
+            
+            // 計算正確的時間差
+            calculateTimeDifference();
+        }
+        
+        // 計算時間差
+        function calculateTimeDifference() {
+            let totalMinutesA = timeA.hour * 60 + timeA.minute;
+            let totalMinutesB = timeB.hour * 60 + timeB.minute;
+            
+            // 如果B小於A，表示跨越了12小時
+            if (totalMinutesB < totalMinutesA) {
+                totalMinutesB += 12 * 60;
+            }
+            
+            let diffMinutes = totalMinutesB - totalMinutesA;
+            correctDifference.hours = Math.floor(diffMinutes / 60);
+            correctDifference.minutes = diffMinutes % 60;
+        }
+        
+        // 顯示提示文字（不顯示具體時間）
+        function showTimeTips() {
+            const displayA = document.getElementById('timeDisplayA');
+            const displayB = document.getElementById('timeDisplayB');
+            
+            displayA.textContent = '🕐 請仔細觀察時鐘A';
+            displayB.textContent = '🕑 請仔細觀察時鐘B';
+        }
+        
+        // 繪製時鐘
+        function drawClock(canvasId, time) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 100;
+            
+            // 清除畫布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 繪製時鐘外圓
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#2d3436';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // 繪製時鐘數字
+            ctx.font = 'bold 18px Arial';
+            ctx.fillStyle = '#2d3436';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            for (let i = 1; i <= 12; i++) {
+                const angle = (i - 3) * Math.PI / 6;
+                const x = centerX + Math.cos(angle) * (radius - 25);
+                const y = centerY + Math.sin(angle) * (radius - 25);
+                ctx.fillText(i.toString(), x, y);
+            }
+            
+            // 繪製時鐘刻度
+            for (let i = 0; i < 60; i++) {
+                const angle = i * Math.PI / 30;
+                const isHour = i % 5 === 0;
+                const tickLength = isHour ? 15 : 8;
+                const tickWidth = isHour ? 2 : 1;
+                
+                const startX = centerX + Math.cos(angle) * (radius - tickLength);
+                const startY = centerY + Math.sin(angle) * (radius - tickLength);
+                const endX = centerX + Math.cos(angle) * radius;
+                const endY = centerY + Math.sin(angle) * radius;
+                
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.strokeStyle = '#2d3436';
+                ctx.lineWidth = tickWidth;
+                ctx.stroke();
+            }
+            
+            // 繪製分針
+            const minuteAngle = (time.minute - 15) * Math.PI / 30;
+            const minuteLength = radius - 30;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + Math.cos(minuteAngle) * minuteLength,
+                centerY + Math.sin(minuteAngle) * minuteLength
+            );
+            ctx.strokeStyle = '#74b9ff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // 繪製時針
+            const hourAngle = ((time.hour + time.minute / 60) - 3) * Math.PI / 6;
+            const hourLength = radius - 50;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + Math.cos(hourAngle) * hourLength,
+                centerY + Math.sin(hourAngle) * hourLength
+            );
+            ctx.strokeStyle = '#e17055';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // 繪製中心圓點
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = '#2d3436';
+            ctx.fill();
+        }
+        
+        // 繪製兩個時鐘
+        function drawClocks() {
+            drawClock('clockA', timeA);
+            drawClock('clockB', timeB);
+        }
+        
+        // 檢查答案
+        function checkAnswer() {
+            const hourInputValue = document.getElementById('hourInput').value.trim();
+            const minuteInputValue = document.getElementById('minuteInput').value.trim();
+            const feedback = document.getElementById('feedback');
+            const ultramanReward = document.getElementById('ultramanReward');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (!hourInputValue || !minuteInputValue) {
+                feedback.textContent = '⚠️ 請輸入完整的時間差！';
+                feedback.className = 'feedback incorrect';
+                return;
+            }
+            
+            const hourInput = parseInt(hourInputValue);
+            const minuteInput = parseInt(minuteInputValue);
+            
+            if (isNaN(hourInput) || isNaN(minuteInput) || 
+                hourInput < 0 || hourInput > 12 || 
+                minuteInput < 0 || minuteInput > 59) {
+                feedback.textContent = '⚠️ 請輸入有效的時間格式！（時：0-12，分：0-59）';
+                feedback.className = 'feedback incorrect';
+                return;
+            }
+            
+            if (hourInput === correctDifference.hours && minuteInput === correctDifference.minutes) {
+                correctCount++;
+                feedback.textContent = '🎉 正確！太棒了！';
+                feedback.className = 'feedback correct';
+                
+                // 獲得超能力霸王獎勵
+                const ultramanIndex = collectedUltramen.length % ultramanHeroes.length;
+                const newUltraman = ultramanHeroes[ultramanIndex];
+                collectedUltramen.push(newUltraman);
+                
+                let rewardMessage = `
+                    <div class="ultraman-character">${newUltraman}</div>
+                    <p style="color: #ffeaa7; font-weight: bold; font-size: 1.3em;">獲得新的超能力霸王英雄！</p>
+                `;
+                
+                // 里程碑慶祝
+                const ultramanCount = collectedUltramen.length;
+                if (ultramanCount === 5) {
+                    rewardMessage += '<p style="color: #00b894; font-weight: bold;">⚡ 太棒了！收集了5位英雄！</p>';
+                    createSpecialEffect('⚡');
+                } else if (ultramanCount === 10) {
+                    rewardMessage += '<p style="color: #74b9ff; font-weight: bold;">🌟 哇！英雄團隊一半集結！</p>';
+                    createSpecialEffect('🌟');
+                } else if (ultramanCount === 15) {
+                    rewardMessage += '<p style="color: #e17055; font-weight: bold;">🔥 快要成功了！只差5位英雄！</p>';
+                    createSpecialEffect('🔥');
+                } else if (ultramanCount === 20) {
+                    rewardMessage += '<p style="color: #ffeaa7; font-weight: bold;">🎊 恭喜！超能力霸王全員集結！</p>';
+                    createSpecialEffect('💥');
+                }
+                
+                ultramanReward.innerHTML = rewardMessage;
+                ultramanReward.classList.remove('hidden');
+                
+                updateUltramanCollection();
+            } else {
+                // 顯示正確答案和具體時間
+                const hourStrA = timeA.hour.toString().padStart(2, '0');
+                const minuteStrA = timeA.minute.toString().padStart(2, '0');
+                const hourStrB = timeB.hour.toString().padStart(2, '0');
+                const minuteStrB = timeB.minute.toString().padStart(2, '0');
+                
+                feedback.textContent = `❌ 答錯了！正確答案是 ${correctDifference.hours} 小時 ${correctDifference.minutes} 分鐘`;
+                feedback.className = 'feedback incorrect';
+                
+                // 暫時顯示正確時間幫助學習
+                const displayA = document.getElementById('timeDisplayA');
+                const displayB = document.getElementById('timeDisplayB');
+                displayA.textContent = `時間A：${hourStrA}:${minuteStrA}`;
+                displayB.textContent = `時間B：${hourStrB}:${minuteStrB}`;
+                
+                ultramanReward.classList.add('hidden');
+            }
+            
+            nextBtn.classList.remove('hidden');
+            updateDisplay();
+        }
+        
+        // 創建特殊效果
+        function createSpecialEffect(emoji) {
+            const effect = document.createElement('div');
+            effect.className = 'special-effect';
+            effect.textContent = emoji;
+            effect.style.left = Math.random() * window.innerWidth + 'px';
+            effect.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.remove();
+            }, 1500);
+        }
+        
+        // 下一題
+        function nextQuestion() {
+            if (currentQuestion >= 20) {
+                showFinalScreen();
+                return;
+            }
+            
+            currentQuestion++;
+            generateNewTimes();
+            drawClocks();
+            showTimeTips();
+            
+            // 重置輸入和反饋
+            document.getElementById('hourInput').value = '';
+            document.getElementById('minuteInput').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('ultramanReward').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            
+            updateDisplay();
+        }
+        
+        // 更新顯示
+        function updateDisplay() {
+            document.getElementById('currentQuestion').textContent = currentQuestion;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('ultramanCount').textContent = collectedUltramen.length;
+        }
+        
+        // 更新超能力霸王收集顯示
+        function updateUltramanCollection() {
+            const collection = document.getElementById('ultramanCollection');
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+            
+            collection.innerHTML = collectedUltramen.map(ultraman => 
+                `<div class="ultraman-badge">${ultraman}</div>`
+            ).join('');
+            
+            // 更新進度條
+            const progress = (collectedUltramen.length / 20) * 100;
+            progressText.textContent = `${collectedUltramen.length}/20`;
+            progressFill.style.width = `${progress}%`;
+            
+            // 如果收集滿了，添加特殊效果
+            if (collectedUltramen.length === 20) {
+                progressFill.style.background = 'linear-gradient(90deg, #ffeaa7, #fdcb6e, #e17055)';
+                progressText.style.color = '#ffeaa7';
+                progressText.style.fontWeight = 'bold';
+                progressText.style.textShadow = '0 0 10px rgba(255, 234, 167, 0.8)';
+            }
+        }
+        
+        // 顯示最終結果
+        function showFinalScreen() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('finalScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = correctCount;
+            document.getElementById('finalUltramen').textContent = collectedUltramen.length;
+            
+            // 根據答對題數顯示不同的鼓勵消息
+            const finalMessage = document.getElementById('finalMessage');
+            const percentage = (correctCount / 20) * 100;
+            
+            if (percentage === 100) {
+                finalMessage.innerHTML = '🏆 太棒了！全部答對！你是時鐘計算大師！<br>🤖 超能力霸王全員集結，宇宙和平靠你了！';
+                finalMessage.style.color = '#ffeaa7';
+            } else if (percentage >= 80) {
+                finalMessage.innerHTML = '⚡ 非常優秀！你對時間計算很熟練！<br>🌟 超能力霸王英雄們都很佩服你！';
+                finalMessage.style.color = '#00b894';
+            } else if (percentage >= 60) {
+                finalMessage.innerHTML = '🚀 做得很好！繼續練習會更棒！<br>💫 已經收集了很多超能力霸王英雄！';
+                finalMessage.style.color = '#74b9ff';
+            } else if (percentage >= 40) {
+                finalMessage.innerHTML = '💪 不錯的開始！多練習就會進步！<br>🔮 超能力霸王英雄們在等你變得更強！';
+                finalMessage.style.color = '#a29bfe';
+            } else {
+                finalMessage.innerHTML = '🌱 學習是個過程，再試一次吧！<br>🤖 超能力霸王英雄們會陪伴你練習！';
+                finalMessage.style.color = '#fd79a8';
+            }
+        }
+        
+        // 重新開始遊戲
+        function restartGame() {
+            currentQuestion = 1;
+            correctCount = 0;
+            collectedUltramen = [];
+            
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('finalScreen').classList.add('hidden');
+            document.getElementById('ultramanCollection').innerHTML = '';
+            
+            // 重置進度條
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            progressFill.style.width = '0%';
+            progressFill.style.background = 'linear-gradient(90deg, #00b894, #00cec9, #74b9ff)';
+            progressText.style.color = '#ffeaa7';
+            progressText.style.fontWeight = 'bold';
+            progressText.style.textShadow = '1px 1px 2px rgba(0,0,0,0.5)';
+            
+            initGame();
+        }
+        
+        // 按Enter鍵提交答案
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const nextBtn = document.getElementById('nextBtn');
+                if (!nextBtn.classList.contains('hidden')) {
+                    nextQuestion();
+                } else {
+                    checkAnswer();
+                }
+            }
+        });
+        
+        // 自動格式化輸入
+        function formatInput(inputId, maxValue) {
+            const input = document.getElementById(inputId);
+            input.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, ''); // 只保留數字
+                if (value.length > 2) {
+                    value = value.substring(0, 2);
+                }
+                if (parseInt(value) > maxValue) {
+                    value = maxValue.toString();
+                }
+                this.value = value;
+            });
+        }
+        
+        // 初始化輸入格式化
+        formatInput('hourInput', 12);
+        formatInput('minuteInput', 59);
+        
+        // 啟動遊戲
+        initGame();
+    </script>
+</body>
+</html>
