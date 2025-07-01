@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小小規則探險家 - Level 4</title>
+    <title>小小規則探險家 - Level 1</title>
     <style>
         /* 基本樣式 */
         body {
@@ -222,6 +222,25 @@
             font-weight: bold;
         }
 
+        .return-button {
+            background-color: #74b9ff; /* 淺藍色 */
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            margin-left: 15px;
+        }
+
+        .return-button:hover {
+            background-color: #4da3ff;
+            transform: translateY(-3px);
+        }
+
         .restart-button:hover {
             background-color: #ff7f50;
             transform: translateY(-3px);
@@ -343,6 +362,11 @@
                 padding: 12px 25px;
             }
 
+            .return-button {
+                font-size: 1.3em;
+                padding: 12px 25px;
+            }
+
             .shape {
                 width: 50px;
                 height: 50px;
@@ -409,7 +433,7 @@
 <body>
     <div class="container">
         <div id="game-screen">
-            <h1>小小規則探險家 - Level 4</h1>
+            <h1>小小規則探險家 - Level 1</h1>
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
@@ -429,6 +453,7 @@
             <h2>恭喜你！</h2>
             <p id="resultMessage"></p>
             <button class="restart-button" onclick="restartGame()">重新開始</button>
+            <button class="return-button" onclick="goToHub()">回到中心</button>
         </div>
     </div>
 
@@ -948,6 +973,11 @@
             resultPage.style.display = 'none';
             gameScreen.style.display = 'block';
             loadQuestion();
+        }
+
+        // 回到關卡選擇中心並傳送成績
+        function goToHub() {
+            window.location.href = `logic_puzzle_hub.html?completed=1&score=${score}&total=${totalQuestions}`;
         }
 
         // 遊戲開始
