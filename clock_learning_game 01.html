@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕐 時鐘學習大挑戰 (20題版)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+        
+        .score-item {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        .clock-container {
+            margin: 30px 0;
+        }
+        
+        #clockCanvas {
+            border: 3px solid #4a5568;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .answer-section {
+            margin: 30px 0;
+        }
+        
+        .time-inputs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .time-input {
+            padding: 10px 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 1.5em;
+            width: 100px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .current-time-display {
+            margin: 15px 0;
+            padding: 15px;
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 15px;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #234e52;
+            letter-spacing: 2px;
+        }
+        
+        .time-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .colon {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 10px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .correct {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #48bb78;
+        }
+        
+        .incorrect {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #e53e3e;
+        }
+        
+        .animal-reward {
+            margin: 20px 0;
+            animation: bounceIn 0.5s ease;
+        }
+        
+        .animal-emoji {
+            font-size: 4em;
+            margin: 10px;
+            animation: bounce 1s infinite;
+        }
+        
+        .collected-animals {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 15px;
+        }
+        
+        .collected-animals h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+        
+        .animal-collection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .animal-badge {
+            font-size: 2em;
+            padding: 10px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
+            transition: transform 0.2s ease;
+        }
+        
+        .animal-badge:hover {
+            transform: scale(1.1);
+        }
+        
+        .progress-bar {
+            margin: 15px 0;
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .final-screen {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(237, 137, 54, 0.3);
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🕐 時鐘學習大挑戰 (20題版)</h1>
+        
+        <div class="score-board">
+            <div class="score-item">題目: <span id="currentQuestion">1</span>/20</div>
+            <div class="score-item">答對: <span id="correctCount">0</span></div>
+            <div class="score-item">收集動物: <span id="animalCount">0</span></div>
+        </div>
+        
+        <div id="gameScreen">
+            <div class="clock-container">
+                <canvas id="clockCanvas" width="300" height="300"></canvas>
+                <div id="timeDisplay" class="current-time-display">
+                    請看時鐘並輸入時間
+                </div>
+            </div>
+            
+            <div class="answer-section">
+                <h3>請讀出時鐘顯示的時間：</h3>
+                <div class="time-inputs">
+                    <input type="text" id="hourInput" class="time-input" maxlength="2" placeholder="時(01-12)">
+                    <span class="colon">:</span>
+                    <input type="text" id="minuteInput" class="time-input" maxlength="2" placeholder="分(00-59)">
+                </div>
+                <button onclick="checkAnswer()" class="submit-btn">提交答案</button>
+            </div>
+            
+            <div id="feedback" class="feedback"></div>
+            
+            <div id="animalReward" class="animal-reward hidden"></div>
+            
+            <button id="nextBtn" onclick="nextQuestion()" class="next-btn hidden">下一題</button>
+        </div>
+        
+        <div id="finalScreen" class="final-screen hidden">
+            <h2>🎉 恭喜完成所有20題！</h2>
+            <p>總共答對了 <span id="finalScore"></span> 題</p>
+            <p>收集了 <span id="finalAnimals"></span> 隻可愛動物！</p>
+            <div id="finalMessage" style="margin: 20px 0; font-size: 1.2em; color: #4a5568;"></div>
+            <button onclick="restartGame()" class="restart-btn">重新開始</button>
+        </div>
+        
+        <div class="collected-animals">
+            <h3>🐾 動物收集進度：<span id="progressText">0/20</span></h3>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="animalCollection" class="animal-collection"></div>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態
+        let currentQuestion = 1;
+        let correctCount = 0;
+        let currentTime = { hour: 0, minute: 0 };
+        let collectedAnimals = [];
+        
+        // 可愛動物列表 - 20種不同動物
+        const animals = [
+            '🐶', '🐱', '🐰', '🐻', '🐼', 
+            '🐨', '🦊', '🐸', '🐵', '🐧', 
+            '🦁', '🐯', '🐮', '🐷', '🐺', 
+            '🐹', '🐭', '🐳', '🐙', '🦀'
+        ];
+        
+        // 初始化遊戲
+        function initGame() {
+            generateNewTime();
+            drawClock();
+            resetTimeDisplay();
+            updateDisplay();
+        }
+        
+        // 生成新的隨機時間
+        function generateNewTime() {
+            currentTime.hour = Math.floor(Math.random() * 12) + 1;
+            currentTime.minute = Math.floor(Math.random() * 12) * 5; // 5分鐘間隔
+        }
+        
+        // 更新時間顯示（顯示正確答案）
+        function showCorrectAnswer() {
+            const timeDisplay = document.getElementById('timeDisplay');
+            const hourStr = currentTime.hour.toString().padStart(2, '0');
+            const minuteStr = currentTime.minute.toString().padStart(2, '0');
+            timeDisplay.textContent = `正確答案：${hourStr}:${minuteStr}`;
+        }
+        
+        // 重置時間顯示
+        function resetTimeDisplay() {
+            const timeDisplay = document.getElementById('timeDisplay');
+            timeDisplay.textContent = '請看時鐘並輸入時間';
+        }
+        
+        // 繪製時鐘
+        function drawClock() {
+            const canvas = document.getElementById('clockCanvas');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 120;
+            
+            // 清除畫布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 繪製時鐘外圓
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#4a5568';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // 繪製時鐘數字
+            ctx.font = 'bold 20px Arial';
+            ctx.fillStyle = '#4a5568';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            for (let i = 1; i <= 12; i++) {
+                const angle = (i - 3) * Math.PI / 6;
+                const x = centerX + Math.cos(angle) * (radius - 25);
+                const y = centerY + Math.sin(angle) * (radius - 25);
+                ctx.fillText(i.toString(), x, y);
+            }
+            
+            // 繪製時鐘刻度
+            for (let i = 0; i < 60; i++) {
+                const angle = i * Math.PI / 30;
+                const isHour = i % 5 === 0;
+                const tickLength = isHour ? 15 : 8;
+                const tickWidth = isHour ? 3 : 1;
+                
+                const startX = centerX + Math.cos(angle) * (radius - tickLength);
+                const startY = centerY + Math.sin(angle) * (radius - tickLength);
+                const endX = centerX + Math.cos(angle) * radius;
+                const endY = centerY + Math.sin(angle) * radius;
+                
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.strokeStyle = '#4a5568';
+                ctx.lineWidth = tickWidth;
+                ctx.stroke();
+            }
+            
+            // 繪製分針
+            const minuteAngle = (currentTime.minute - 15) * Math.PI / 30;
+            const minuteLength = radius - 40;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + Math.cos(minuteAngle) * minuteLength,
+                centerY + Math.sin(minuteAngle) * minuteLength
+            );
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // 繪製時針
+            const hourAngle = ((currentTime.hour + currentTime.minute / 60) - 3) * Math.PI / 6;
+            const hourLength = radius - 60;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + Math.cos(hourAngle) * hourLength,
+                centerY + Math.sin(hourAngle) * hourLength
+            );
+            ctx.strokeStyle = '#e53e3e';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+            
+            // 繪製中心圓點
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = '#4a5568';
+            ctx.fill();
+        }
+        
+        // 檢查答案
+        function checkAnswer() {
+            const hourInputValue = document.getElementById('hourInput').value.trim();
+            const minuteInputValue = document.getElementById('minuteInput').value.trim();
+            const feedback = document.getElementById('feedback');
+            const animalReward = document.getElementById('animalReward');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (!hourInputValue || !minuteInputValue) {
+                feedback.textContent = '請輸入完整的時間！';
+                feedback.className = 'feedback incorrect';
+                return;
+            }
+            
+            const hourInput = parseInt(hourInputValue);
+            const minuteInput = parseInt(minuteInputValue);
+            
+            if (isNaN(hourInput) || isNaN(minuteInput) || 
+                hourInput < 1 || hourInput > 12 || 
+                minuteInput < 0 || minuteInput > 59) {
+                feedback.textContent = '請輸入有效的時間格式！（時：01-12，分：00-59）';
+                feedback.className = 'feedback incorrect';
+                return;
+            }
+            
+            // 顯示正確答案
+            showCorrectAnswer();
+            
+            if (hourInput === currentTime.hour && minuteInput === currentTime.minute) {
+                correctCount++;
+                feedback.textContent = '🎉 答對了！太棒了！';
+                feedback.className = 'feedback correct';
+                
+                // 獲得動物獎勵
+                const animalIndex = collectedAnimals.length % animals.length;
+                const newAnimal = animals[animalIndex];
+                collectedAnimals.push(newAnimal);
+                
+                let rewardMessage = `
+                    <div class="animal-emoji">${newAnimal}</div>
+                    <p>獲得新動物朋友！</p>
+                `;
+                
+                // 里程碑慶祝
+                const animalCount = collectedAnimals.length;
+                if (animalCount === 5) {
+                    rewardMessage += '<p style="color: #667eea; font-weight: bold;">🎉 太棒了！收集了5隻動物！</p>';
+                } else if (animalCount === 10) {
+                    rewardMessage += '<p style="color: #667eea; font-weight: bold;">🌟 哇！動物園一半滿了！</p>';
+                } else if (animalCount === 15) {
+                    rewardMessage += '<p style="color: #667eea; font-weight: bold;">🏆 快要成功了！只差5隻！</p>';
+                } else if (animalCount === 20) {
+                    rewardMessage += '<p style="color: #f6ad55; font-weight: bold;">🎊 恭喜！動物園大滿貫！</p>';
+                }
+                
+                animalReward.innerHTML = rewardMessage;
+                animalReward.classList.remove('hidden');
+                
+                updateAnimalCollection();
+            } else {
+                feedback.textContent = `❌ 答錯了！請看上方的正確答案`;
+                feedback.className = 'feedback incorrect';
+                animalReward.classList.add('hidden');
+            }
+            
+            nextBtn.classList.remove('hidden');
+            updateDisplay();
+        }
+        
+        // 下一題
+        function nextQuestion() {
+            if (currentQuestion >= 20) {
+                showFinalScreen();
+                return;
+            }
+            
+            currentQuestion++;
+            generateNewTime();
+            drawClock();
+            
+            // 重置輸入和反饋
+            document.getElementById('hourInput').value = '';
+            document.getElementById('minuteInput').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('animalReward').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            
+            // 重置時間顯示
+            resetTimeDisplay();
+            
+            updateDisplay();
+        }
+        
+        // 更新顯示
+        function updateDisplay() {
+            document.getElementById('currentQuestion').textContent = currentQuestion;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('animalCount').textContent = collectedAnimals.length;
+        }
+        
+        // 更新動物收集顯示
+        function updateAnimalCollection() {
+            const collection = document.getElementById('animalCollection');
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+            
+            collection.innerHTML = collectedAnimals.map(animal => 
+                `<div class="animal-badge">${animal}</div>`
+            ).join('');
+            
+            // 更新進度條
+            const progress = (collectedAnimals.length / 20) * 100;
+            progressText.textContent = `${collectedAnimals.length}/20`;
+            progressFill.style.width = `${progress}%`;
+            
+            // 如果收集滿了，添加特殊效果
+            if (collectedAnimals.length === 20) {
+                progressFill.style.background = 'linear-gradient(90deg, #f6ad55, #ed8936)';
+                progressText.style.color = '#dd6b20';
+                progressText.style.fontWeight = 'bold';
+            }
+        }
+        
+        // 顯示最終結果
+        function showFinalScreen() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('finalScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = correctCount;
+            document.getElementById('finalAnimals').textContent = collectedAnimals.length;
+            
+            // 根據答對題數顯示不同的鼓勵消息
+            const finalMessage = document.getElementById('finalMessage');
+            const percentage = (correctCount / 20) * 100;
+            
+            if (percentage === 100) {
+                finalMessage.innerHTML = '🏆 太棒了！全部答對！你是時鐘大師！<br>🌟 收集了完整的動物園！';
+                finalMessage.style.color = '#22543d';
+            } else if (percentage >= 80) {
+                finalMessage.innerHTML = '🎖️ 非常優秀！你對時鐘很熟悉！<br>🐾 動物朋友們都很喜歡你！';
+                finalMessage.style.color = '#2d3748';
+            } else if (percentage >= 60) {
+                finalMessage.innerHTML = '👏 做得很好！繼續練習會更棒！<br>🎈 已經收集了很多動物朋友！';
+                finalMessage.style.color = '#4a5568';
+            } else if (percentage >= 40) {
+                finalMessage.innerHTML = '💪 不錯的開始！多練習就會進步！<br>🎯 動物朋友們在等你回來！';
+                finalMessage.style.color = '#718096';
+            } else {
+                finalMessage.innerHTML = '🌱 學習是個過程，再試一次吧！<br>🤗 動物朋友們會陪伴你練習！';
+                finalMessage.style.color = '#a0aec0';
+            }
+        }
+        
+        // 重新開始遊戲
+        function restartGame() {
+            currentQuestion = 1;
+            correctCount = 0;
+            collectedAnimals = [];
+            
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('finalScreen').classList.add('hidden');
+            document.getElementById('animalCollection').innerHTML = '';
+            
+            initGame();
+        }
+        
+        // 按Enter鍵提交答案
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const nextBtn = document.getElementById('nextBtn');
+                if (!nextBtn.classList.contains('hidden')) {
+                    nextQuestion();
+                } else {
+                    checkAnswer();
+                }
+            }
+        });
+        
+        // 自動格式化輸入
+        function formatInput(inputId, maxValue) {
+            const input = document.getElementById(inputId);
+            input.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, ''); // 只保留數字
+                if (value.length > 2) {
+                    value = value.substring(0, 2);
+                }
+                if (parseInt(value) > maxValue) {
+                    value = maxValue.toString();
+                }
+                this.value = value;
+            });
+            
+            input.addEventListener('blur', function() {
+                if (this.value && this.value.length === 1) {
+                    this.value = '0' + this.value; // 自動補零
+                }
+            });
+        }
+        
+        // 初始化輸入格式化
+        formatInput('hourInput', 12);
+        formatInput('minuteInput', 59);
+        
+        // 啟動遊戲
+        initGame();
+    </script>
+</body>
+</html>
