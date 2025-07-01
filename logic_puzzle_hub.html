@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧩 小小規則探險家 - 遊戲選擇中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .hub-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            text-align: center;
+            color: #2d3436;
+        }
+
+        h1 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 3em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #636e72;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .level-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 30px 25px;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card:hover {
+            transform: translateY(-8px);
+            border-color: #667eea;
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .level-card.available {
+            cursor: pointer;
+        }
+
+        .level-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .level-card.locked::before {
+            content: '🔒';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            opacity: 0.7;
+        }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .level-emoji {
+            font-size: 3em;
+            animation: pulse 2s infinite;
+        }
+
+        .level-info h3 {
+            font-size: 1.8em;
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+
+        .level-difficulty {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .difficulty-basic { background: linear-gradient(45deg, #00b894, #00cec9); }
+        .difficulty-intermediate { background: linear-gradient(45deg, #fdcb6e, #e17055); }
+        .difficulty-advanced { background: linear-gradient(45deg, #e17055, #d63031); }
+        .difficulty-expert { background: linear-gradient(45deg, #a29bfe, #6c5ce7); }
+
+        .level-description {
+            color: #636e72;
+            margin: 15px 0;
+            line-height: 1.5;
+            font-size: 1.1em;
+        }
+
+        .level-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .feature-tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .level-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #636e72;
+            margin-top: 2px;
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .play-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .play-button.locked {
+            background: #b2bec3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .back-button {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(116, 185, 255, 0.4);
+        }
+
+        .progress-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .progress-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .overall-progress {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .progress-item {
+            text-align: center;
+        }
+
+        .progress-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .progress-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        /* 動畫效果 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes unlock {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.6; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        .unlocking {
+            animation: unlock 1s ease-in-out;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .hub-container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .levels-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .level-card {
+                padding: 25px 20px;
+            }
+
+            .level-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .level-emoji {
+                font-size: 2.5em;
+            }
+
+            .overall-progress {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hub-container">
+        <h1>🧩 小小規則探險家</h1>
+        <p class="subtitle">選擇適合的難度，開始你的邏輯推理大冒險！</p>
+
+        <div class="levels-grid">
+            <!-- Level 1 - 基礎 -->
+            <div class="level-card available" onclick="startLevel(1)">
+                <div class="level-header">
+                    <div class="level-emoji">🔍</div>
+                    <div class="level-info">
+                        <h3>Level 1</h3>
+                        <span class="level-difficulty difficulty-basic">基礎入門</span>
+                    </div>
+                </div>
+                <div class="level-description">
+                    學習觀察基本的圖形規律，包括形狀、顏色和數量的簡單變化模式。
+                </div>
+                <div class="level-features">
+                    <span class="feature-tag">🔺 基本形狀</span>
+                    <span class="feature-tag">🎨 顏色規律</span>
+                    <span class="feature-tag">📊 數量變化</span>
+                </div>
+                <div class="level-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">10</div>
+                        <div class="stat-label">題目數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">⭐</div>
+                        <div class="stat-label">難度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5-8</div>
+                        <div class="stat-label">適合年齡</div>
+                    </div>
+                </div>
+                <a href="logic_puzzle_level_1.html" class="play-button">🚀 開始探險</a>
+            </div>
+
+            <!-- Level 2 - 中級 -->
+            <div class="level-card available" onclick="startLevel(2)">
+                <div class="level-header">
+                    <div class="level-emoji">🧠</div>
+                    <div class="level-info">
+                        <h3>Level 2</h3>
+                        <span class="level-difficulty difficulty-intermediate">中級挑戰</span>
+                    </div>
+                </div>
+                <div class="level-description">
+                    學習多維度規律分析，包括大小變化、旋轉角度和複合模式的識別。
+                </div>
+                <div class="level-features">
+                    <span class="feature-tag">📏 大小變化</span>
+                    <span class="feature-tag">🔄 旋轉規律</span>
+                    <span class="feature-tag">🎯 複合模式</span>
+                </div>
+                <div class="level-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">題目數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">⭐⭐</div>
+                        <div class="stat-label">難度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">8-12</div>
+                        <div class="stat-label">適合年齡</div>
+                    </div>
+                </div>
+                <button class="play-button locked">🔒 需完成Level 1</button>
+            </div>
+
+            <!-- Level 3 - 高級 -->
+            <div class="level-card locked" onclick="startLevel(3)">
+                <div class="level-header">
+                    <div class="level-emoji">🎯</div>
+                    <div class="level-info">
+                        <h3>Level 3</h3>
+                        <span class="level-difficulty difficulty-advanced">高級思維</span>
+                    </div>
+                </div>
+                <div class="level-description">
+                    挑戰抽象邏輯推理，包括序列預測、對稱規律和條件判斷。
+                </div>
+                <div class="level-features">
+                    <span class="feature-tag">🔮 抽象思維</span>
+                    <span class="feature-tag">⚖️ 對稱邏輯</span>
+                    <span class="feature-tag">🧩 序列預測</span>
+                </div>
+                <div class="level-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">題目數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">⭐⭐⭐</div>
+                        <div class="stat-label">難度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">12+</div>
+                        <div class="stat-label">適合年齡</div>
+                    </div>
+                </div>
+                <button class="play-button locked">🔒 需完成Level 2</button>
+            </div>
+
+            <!-- Level 4 - 專家 -->
+            <div class="level-card locked" onclick="startLevel(4)">
+                <div class="level-header">
+                    <div class="level-emoji">🏆</div>
+                    <div class="level-info">
+                        <h3>Level 4</h3>
+                        <span class="level-difficulty difficulty-expert">專家級</span>
+                    </div>
+                </div>
+                <div class="level-description">
+                    終極邏輯挑戰！組合多種規律，解決最複雜的模式識別問題。
+                </div>
+                <div class="level-features">
+                    <span class="feature-tag">🌟 組合邏輯</span>
+                    <span class="feature-tag">🔥 極限挑戰</span>
+                    <span class="feature-tag">👑 大師認證</span>
+                </div>
+                <div class="level-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">20</div>
+                        <div class="stat-label">題目數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">⭐⭐⭐⭐</div>
+                        <div class="stat-label">難度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">適合年齡</div>
+                    </div>
+                </div>
+                <button class="play-button locked">🔒 需完成Level 3</button>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <h3>🎯 你的探險進度</h3>
+            <div class="overall-progress">
+                <div class="progress-item">
+                    <div class="progress-number">0</div>
+                    <div class="progress-label">已完成關卡</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-number">0</div>
+                    <div class="progress-label">總答對題數</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-number">0%</div>
+                    <div class="progress-label">整體正確率</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-number">🔰</div>
+                    <div class="progress-label">當前等級</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-button">⬅️ 回到遊戲主頁</a>
+    </div>
+
+    <script>
+        // 遊戲進度管理
+        let gameProgress = {
+            completedLevels: [],
+            totalCorrect: 0,
+            totalQuestions: 0,
+            unlockedLevels: [1] // 預設解鎖Level 1
+        };
+
+        // 從localStorage載入進度
+        function loadProgress() {
+            const saved = localStorage.getItem('logicPuzzleProgress');
+            if (saved) {
+                gameProgress = JSON.parse(saved);
+                updateProgressDisplay();
+                updateLevelLocks();
+            }
+        }
+
+        // 儲存進度到localStorage
+        function saveProgress() {
+            localStorage.setItem('logicPuzzleProgress', JSON.stringify(gameProgress));
+        }
+
+        // 更新進度顯示
+        function updateProgressDisplay() {
+            const progressItems = document.querySelectorAll('.progress-number');
+            progressItems[0].textContent = gameProgress.completedLevels.length;
+            progressItems[1].textContent = gameProgress.totalCorrect;
+            
+            const accuracy = gameProgress.totalQuestions > 0 ? 
+                Math.round((gameProgress.totalCorrect / gameProgress.totalQuestions) * 100) : 0;
+            progressItems[2].textContent = `${accuracy}%`;
+            
+            // 更新等級徽章
+            const level = gameProgress.completedLevels.length;
+            const badges = ['🔰', '🥉', '🥈', '🥇', '👑'];
+            progressItems[3].textContent = badges[Math.min(level, badges.length - 1)];
+        }
+
+        // 更新關卡鎖定狀態
+        function updateLevelLocks() {
+            const levelCards = document.querySelectorAll('.level-card');
+            const playButtons = document.querySelectorAll('.play-button');
+            
+            levelCards.forEach((card, index) => {
+                const levelNum = index + 1;
+                if (gameProgress.unlockedLevels.includes(levelNum)) {
+                    card.classList.remove('locked');
+                    card.classList.add('available');
+                    playButtons[index].classList.remove('locked');
+                    playButtons[index].textContent = '🚀 開始探險';
+                } else {
+                    card.classList.add('locked');
+                    card.classList.remove('available');
+                    playButtons[index].classList.add('locked');
+                    playButtons[index].textContent = `🔒 需完成Level ${levelNum - 1}`;
+                }
+            });
+        }
+
+        // 開始指定關卡
+        function startLevel(levelNum) {
+            if (gameProgress.unlockedLevels.includes(levelNum)) {
+                // 記錄開始時間等統計
+                window.location.href = `logic_puzzle_level_${levelNum}.html`;
+            } else {
+                // 顯示提示訊息
+                alert(`請先完成Level ${levelNum - 1}才能解鎖此關卡！`);
+            }
+        }
+
+        // 完成關卡時的回調函數
+        function completeLevel(levelNum, score, total) {
+            if (!gameProgress.completedLevels.includes(levelNum)) {
+                gameProgress.completedLevels.push(levelNum);
+                
+                // 解鎖下一關
+                if (levelNum < 4 && !gameProgress.unlockedLevels.includes(levelNum + 1)) {
+                    gameProgress.unlockedLevels.push(levelNum + 1);
+                    
+                    // 播放解鎖動畫
+                    setTimeout(() => {
+                        const nextCard = document.querySelectorAll('.level-card')[levelNum];
+                        if (nextCard) {
+                            nextCard.classList.add('unlocking');
+                            setTimeout(() => {
+                                nextCard.classList.remove('unlocking');
+                                updateLevelLocks();
+                            }, 1000);
+                        }
+                    }, 500);
+                }
+            }
+            
+            gameProgress.totalCorrect += score;
+            gameProgress.totalQuestions += total;
+            saveProgress();
+            updateProgressDisplay();
+        }
+
+        // 重置進度（開發測試用）
+        function resetProgress() {
+            if (confirm('確定要重置所有進度嗎？')) {
+                localStorage.removeItem('logicPuzzleProgress');
+                gameProgress = {
+                    completedLevels: [],
+                    totalCorrect: 0,
+                    totalQuestions: 0,
+                    unlockedLevels: [1]
+                };
+                updateProgressDisplay();
+                updateLevelLocks();
+            }
+        }
+
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            
+            // 檢查是否從遊戲頁面返回並帶有成績
+            const urlParams = new URLSearchParams(window.location.search);
+            const level = urlParams.get('completed');
+            const score = urlParams.get('score');
+            const total = urlParams.get('total');
+            
+            if (level && score && total) {
+                completeLevel(parseInt(level), parseInt(score), parseInt(total));
+            }
+        });
+
+        // 添加鍵盤快速鍵
+        document.addEventListener('keydown', function(e) {
+            if (e.key >= '1' && e.key <= '4') {
+                const levelNum = parseInt(e.key);
+                startLevel(levelNum);
+            }
+            
+            // 開發測試快速鍵
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                resetProgress();
+            }
+        });
+    </script>
+</body>
+</html>
