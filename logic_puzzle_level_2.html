@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小小規則探險家 - Level 2</title>
+    <style>
+        /* 基本樣式 */
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f0f8ff, #e0ffff);
+            color: #333;
+            overflow-x: hidden; /* 防止水平滾動 */
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden; /* 防止內容溢出 */
+        }
+
+        h1 {
+            color: #ff6347; /* 番茄紅 */
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 進度條 */
+        .progress-container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #eee;
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            border: 2px solid #aaddff; /* 淺藍色邊框 */
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #66bb6a; /* 綠色 */
+            border-radius: 15px;
+            transition: width 0.5s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* 題目區域 */
+        .question-section {
+            margin-top: 30px;
+            min-height: 200px;
+        }
+
+        .question-text {
+            font-size: 1.8em;
+            color: #4682b4; /* 鋼鐵藍 */
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .shapes-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px; /* 圖形之間的間距 */
+            margin-bottom: 30px;
+        }
+
+        .shape-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-direction: column;
+        }
+
+        .shape-group span {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .math-symbol {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #555;
+            margin: 0 10px;
+        }
+
+        /* 選項按鈕 */
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .option-button {
+            background-color: #87cefa; /* 天藍色 */
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 18px 35px;
+            font-size: 1.6em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .option-button:hover {
+            background-color: #5fb0e8;
+            transform: translateY(-3px);
+        }
+
+        .option-button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 回饋訊息 */
+        .feedback-message {
+            margin-top: 25px;
+            font-size: 1.5em;
+            font-weight: bold;
+            min-height: 50px; /* 確保空間 */
+        }
+
+        .correct {
+            color: #28a745; /* 成功綠 */
+        }
+
+        .incorrect {
+            color: #dc3545; /* 錯誤紅 */
+        }
+
+        /* 慶祝動畫 */
+        .celebration-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffd700; /* 金色 */
+            border-radius: 50%;
+            opacity: 0;
+            animation: confetti-fall 2s forwards ease-out;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(calc(100vh + 100px)) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* 結果頁面 */
+        .result-page {
+            display: none;
+            padding: 30px;
+            background-color: #ffe0b2; /* 淺橙色 */
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-page h2 {
+            color: #d2691e; /* 巧克力色 */
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .result-page p {
+            font-size: 1.6em;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .restart-button {
+            background-color: #ffa07a; /* 淺鮭魚色 */
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+
+        .restart-button:hover {
+            background-color: #ff7f50;
+            transform: translateY(-3px);
+        }
+
+        /* SVG 圖形繪製 */
+        .shape {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 不同顏色的圖形 */
+        .shape.red { background-color: #ff6b6b; } /* 紅色 */
+        .shape.blue { background-color: #4a90e2; } /* 藍色 */
+        .shape.yellow { background-color: #f7d700; } /* 黃色 */
+        .shape.green { background-color: #2ecc71; } /* 綠色 */
+        .shape.purple { background-color: #9b59b6; } /* 紫色 */
+        .shape.orange { background-color: #f39c12; } /* 橘色 */
+
+        /* 圓形 */
+        .shape.circle { border-radius: 50%; }
+
+        /* 三角形 */
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 60px solid; /* 顏色由父元素決定 */
+            background-color: transparent; /* 重置背景色 */
+            border-radius: 0;
+        }
+        .shape.triangle.red { border-bottom-color: #ff6b6b; }
+        .shape.triangle.blue { border-bottom-color: #4a90e2; }
+        .shape.triangle.yellow { border-bottom-color: #f7d700; }
+        .shape.triangle.green { border-bottom-color: #2ecc71; }
+        .shape.triangle.purple { border-bottom-color: #9b59b6; }
+        .shape.triangle.orange { border-bottom-color: #f39c12; }
+
+
+        /* 星形 (使用CSS繪製，簡化版) */
+        .shape.star {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 60px solid; /* 顏色由父元素決定 */
+            position: relative;
+            transform: rotate(35deg); /* 旋轉以像星星 */
+            background-color: transparent;
+            border-radius: 0;
+        }
+        .shape.star:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -30px;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-top: 60px solid;
+            transform: rotate(-70deg);
+            transform-origin: 30px 30px;
+        }
+        /* 星形顏色 */
+        .shape.star.red { border-bottom-color: #ff6b6b; }
+        .shape.star.red:before { border-top-color: #ff6b6b; }
+        .shape.star.blue { border-bottom-color: #4a90e2; }
+        .shape.star.blue:before { border-top-color: #4a90e2; }
+        .shape.star.yellow { border-bottom-color: #f7d700; }
+        .shape.star.yellow:before { border-top-color: #f7d700; }
+        .shape.star.green { border-bottom-color: #2ecc71; }
+        .shape.star.green:before { border-top-color: #2ecc71; }
+        .shape.star.purple { border-bottom-color: #9b59b6; }
+        .shape.star.purple:before { border-top-color: #9b59b6; }
+        .shape.star.orange { border-bottom-color: #f39c12; }
+        .shape.star.orange:before { border-top-color: #f39c12; }
+
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .question-text {
+                font-size: 1.5em;
+            }
+
+            .option-button {
+                padding: 15px 25px;
+                font-size: 1.4em;
+                min-width: 120px;
+            }
+
+            .feedback-message {
+                font-size: 1.2em;
+            }
+
+            .result-page h2 {
+                font-size: 2em;
+            }
+
+            .result-page p {
+                font-size: 1.3em;
+            }
+
+            .restart-button {
+                font-size: 1.3em;
+                padding: 12px 25px;
+            }
+
+            .shape {
+                width: 50px;
+                height: 50px;
+            }
+            .shape.triangle {
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+                border-bottom: 50px solid;
+            }
+             .shape.star {
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+                border-bottom: 50px solid;
+            }
+            .shape.star:before {
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+                border-top: 50px solid;
+                transform-origin: 25px 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .question-text {
+                font-size: 1.2em;
+            }
+            .option-button {
+                padding: 12px 20px;
+                font-size: 1.2em;
+                min-width: 100px;
+            }
+            .feedback-message {
+                font-size: 1em;
+            }
+            .shapes-display {
+                gap: 10px;
+            }
+            .shape {
+                width: 40px;
+                height: 40px;
+            }
+            .shape.triangle {
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                border-bottom: 40px solid;
+            }
+             .shape.star {
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                border-bottom: 40px solid;
+            }
+            .shape.star:before {
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                border-top: 40px solid;
+                transform-origin: 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="game-screen">
+            <h1>小小規則探險家 - Level 2</h1>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="question-section">
+                <p class="question-text" id="questionText"></p>
+                <div class="shapes-display" id="shapesDisplay">
+                    <!-- 圖形將由 JavaScript 生成 -->
+                </div>
+                <div class="options-container" id="optionsContainer">
+                    <!-- 選項按鈕將由 JavaScript 生成 -->
+                </div>
+                <p class="feedback-message" id="feedbackMessage"></p>
+            </div>
+        </div>
+
+        <div id="result-page" class="result-page">
+            <h2>恭喜你！</h2>
+            <p id="resultMessage"></p>
+            <button class="restart-button" onclick="restartGame()">重新開始</button>
+        </div>
+    </div>
+
+    <script>
+
+        const questions = [
+            {
+                type: 'geometric',
+                question: '依照形狀、顏色與旋轉角度的循環規律，問號處應該是哪個圖形？',
+                shapes: [
+                    [{ shape: 'circle', color: 'red', rotation: '0deg' }],
+                    [{ shape: 'triangle', color: 'green', rotation: '90deg' }],
+                    [{ shape: 'square', color: 'blue', rotation: '180deg' }],
+                    [{ shape: 'star', color: 'yellow', rotation: '270deg' }],
+                    '?' 
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'red', rotation: '0deg' }],
+                    [{ shape: 'triangle', color: 'blue', rotation: '90deg' }],
+                    [{ shape: 'square', color: 'green', rotation: '180deg' }],
+                    [{ shape: 'star', color: 'yellow', rotation: '270deg' }]
+                ],
+                answerIndex: 0,
+                explanation: '形狀依序圓→三角→方→星循環，顏色依序紅→綠→藍→黃循環，旋轉角度依序0°→90°→180°→270°循環，因此下一個應是0°的紅色圓形。'
+            },
+            {
+                type: 'geometric',
+                question: '數字呈倍增規律，形狀依序變化，問號處應是？',
+                shapes: [
+                    [{ shape: 'circle', color: 'purple', number: 1 }],
+                    [{ shape: 'square', color: 'purple', number: 2 }],
+                    [{ shape: 'triangle', color: 'purple', number: 4 }],
+                    [{ shape: 'star', color: 'purple', number: 8 }],
+                    '?' 
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'purple', number: 16 }],
+                    [{ shape: 'square', color: 'purple', number: 16 }],
+                    [{ shape: 'triangle', color: 'purple', number: 16 }],
+                    [{ shape: 'star', color: 'purple', number: 16 }]
+                ],
+                answerIndex: 0,
+                explanation: '數字每次乘以2，形狀依圓→方→三角→星循環，因此下一個是數字16的紫色圓形。'
+            },
+            {
+                type: 'geometric',
+                question: '觀察左右兩圖的顏色與大小交換規律，問號處是哪一組？',
+                shapes: [
+                    [{ shape: 'circle', color: 'red', size: 'small' }, { shape: 'square', color: 'blue', size: 'large' }],
+                    [{ shape: 'circle', color: 'blue', size: 'large' }, { shape: 'square', color: 'red', size: 'small' }],
+                    [{ shape: 'circle', color: 'yellow', size: 'small' }, { shape: 'square', color: 'green', size: 'large' }],
+                    '?' 
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'green', size: 'large' }, { shape: 'square', color: 'yellow', size: 'small' }],
+                    [{ shape: 'circle', color: 'red', size: 'small' }, { shape: 'square', color: 'blue', size: 'large' }],
+                    [{ shape: 'circle', color: 'yellow', size: 'large' }, { shape: 'square', color: 'green', size: 'small' }],
+                    [{ shape: 'triangle', color: 'purple', size: 'small' }, { shape: 'star', color: 'orange', size: 'large' }]
+                ],
+                answerIndex: 0,
+                explanation: '圓形與方形會交換顏色與大小，顏色序列紅→藍→黃→綠循環，因此下一組是大綠圓與小黃方。'
+            },
+            {
+                type: 'geometric',
+                question: '觀察旋轉角度每45°遞增並且每兩個圖形顏色輪替的規律，問號處是？',
+                shapes: [
+                    [{ shape: 'triangle', color: 'orange', rotation: '0deg' }],
+                    [{ shape: 'triangle', color: 'orange', rotation: '45deg' }],
+                    [{ shape: 'triangle', color: 'purple', rotation: '90deg' }],
+                    [{ shape: 'triangle', color: 'purple', rotation: '135deg' }],
+                    '?' 
+                ],
+                options: [
+                    [{ shape: 'triangle', color: 'orange', rotation: '180deg' }],
+                    [{ shape: 'triangle', color: 'purple', rotation: '180deg' }],
+                    [{ shape: 'triangle', color: 'orange', rotation: '225deg' }],
+                    [{ shape: 'triangle', color: 'purple', rotation: '225deg' }]
+                ],
+                answerIndex: 0,
+                explanation: '旋轉角度每次增加45°，顏色每兩個圖形切換一次，因此第五個應為180°的橘色三角形。'
+            },
+            {
+                type: 'geometric',
+                question: '顏色循環且數字依質數遞增，問號處應該是？',
+                shapes: [
+                    [{ shape: 'star', color: 'red', number: 2 }],
+                    [{ shape: 'star', color: 'blue', number: 3 }],
+                    [{ shape: 'star', color: 'yellow', number: 5 }],
+                    [{ shape: 'star', color: 'green', number: 7 }],
+                    [{ shape: 'star', color: 'purple', number: 11 }],
+                    '?' 
+                ],
+                options: [
+                    [{ shape: 'star', color: 'red', number: 13 }],
+                    [{ shape: 'star', color: 'blue', number: 13 }],
+                    [{ shape: 'star', color: 'yellow', number: 12 }],
+                    [{ shape: 'star', color: 'green', number: 9 }]
+                ],
+                answerIndex: 0,
+                explanation: '顏色依紅→藍→黃→綠→紫循環，數字按質數2,3,5,7,11遞增，下個應為質數13且顏色回到紅色。'
+            },
+            {
+                type: 'geometric',
+                question: '兩個三角形方向交替出現，顏色也按照固定順序變化，問號處是哪一組？',
+                shapes: [
+                    [{ shape: 'triangle', color: 'red', rotation: '0deg' }, { shape: 'triangle', color: 'blue', rotation: '180deg' }],
+                    [{ shape: 'triangle', color: 'green', rotation: '180deg' }, { shape: 'triangle', color: 'yellow', rotation: '0deg' }],
+                    [{ shape: 'triangle', color: 'red', rotation: '0deg' }, { shape: 'triangle', color: 'blue', rotation: '180deg' }],
+                    '?' 
+                ],
+                options: [
+                    [{ shape: 'triangle', color: 'green', rotation: '180deg' }, { shape: 'triangle', color: 'yellow', rotation: '0deg' }],
+                    [{ shape: 'triangle', color: 'red', rotation: '0deg' }, { shape: 'triangle', color: 'blue', rotation: '180deg' }],
+                    [{ shape: 'triangle', color: 'yellow', rotation: '0deg' }, { shape: 'triangle', color: 'green', rotation: '180deg' }],
+                    [{ shape: 'circle', color: 'purple', rotation: '0deg' }, { shape: 'square', color: 'orange', rotation: '0deg' }]
+                ],
+                answerIndex: 0,
+                explanation: '兩個三角形的方向交替，上下、下上重複，顏色依紅→綠→紅→…及藍→黃→藍→…循環，因此第四組應為上綠下黃的組合。'
+            }
+            {
+                type: 'geometric',
+                question: '圓形數量依斐波那契數列增長，顏色按紅、藍、黃循環，問號處應為？',
+                shapes: [
+                    [{ shape: 'circle', color: 'red', count: 1 }],
+                    [{ shape: 'circle', color: 'blue', count: 1 }],
+                    [{ shape: 'circle', color: 'yellow', count: 2 }],
+                    [{ shape: 'circle', color: 'red', count: 3 }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'blue', count: 5 }],
+                    [{ shape: 'circle', color: 'yellow', count: 5 }],
+                    [{ shape: 'circle', color: 'blue', count: 4 }],
+                    [{ shape: 'circle', color: 'red', count: 5 }]
+                ],
+                answerIndex: 0,
+                explanation: '數量呈1,1,2,3,5的斐波那契序列，顏色紅→藍→黃循環，因此下一個為5個藍色圓形。'
+            },
+            {
+                type: 'geometric',
+                question: '觀察數字每次加3且形狀依星、方、三角循環的規律，問號處是？',
+                shapes: [
+                    [{ shape: 'star', color: 'purple', number: 3 }],
+                    [{ shape: 'square', color: 'purple', number: 6 }],
+                    [{ shape: 'triangle', color: 'purple', number: 9 }],
+                    [{ shape: 'star', color: 'purple', number: 12 }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'square', color: 'purple', number: 15 }],
+                    [{ shape: 'triangle', color: 'purple', number: 15 }],
+                    [{ shape: 'star', color: 'purple', number: 15 }],
+                    [{ shape: 'circle', color: 'purple', number: 15 }]
+                ],
+                answerIndex: 0,
+                explanation: '數字每次加3，形狀星→方→三角循環，下一個應是數字15的紫色方塊。'
+            },
+            {
+                type: 'geometric',
+                question: '第一個圖形旋轉角度每次加90°，第二個圖形顏色紅、綠交替，問號處是哪一組？',
+                shapes: [
+                    [{ shape: 'square', color: 'red', rotation: '0deg' }, { shape: 'circle', color: 'green' }],
+                    [{ shape: 'square', color: 'red', rotation: '90deg' }, { shape: 'circle', color: 'red' }],
+                    [{ shape: 'square', color: 'red', rotation: '180deg' }, { shape: 'circle', color: 'green' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'square', color: 'red', rotation: '270deg' }, { shape: 'circle', color: 'red' }],
+                    [{ shape: 'square', color: 'red', rotation: '270deg' }, { shape: 'circle', color: 'green' }],
+                    [{ shape: 'square', color: 'red', rotation: '0deg' }, { shape: 'circle', color: 'red' }],
+                    [{ shape: 'square', color: 'blue', rotation: '270deg' }, { shape: 'circle', color: 'green' }]
+                ],
+                answerIndex: 0,
+                explanation: '方塊旋轉0°→90°→180°→270°，圓形顏色綠→紅→綠→紅交替，因此答案為270°的紅方塊與紅圓形。'
+            },
+            {
+                type: 'geometric',
+                question: '觀察圖形大小依小、中、大循環，顏色依紫、橘循環，問號處是？',
+                shapes: [
+                    [{ shape: 'triangle', color: 'purple', size: 'small' }],
+                    [{ shape: 'triangle', color: 'orange', size: 'medium' }],
+                    [{ shape: 'triangle', color: 'purple', size: 'large' }],
+                    [{ shape: 'triangle', color: 'orange', size: 'small' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'triangle', color: 'purple', size: 'medium' }],
+                    [{ shape: 'triangle', color: 'orange', size: 'large' }],
+                    [{ shape: 'triangle', color: 'purple', size: 'large' }],
+                    [{ shape: 'triangle', color: 'orange', size: 'medium' }]
+                ],
+                answerIndex: 3,
+                explanation: '大小小→中→大→小→中循環，顏色紫→橘→紫→橘→…，因此應為中等大小的橘色三角形。'
+            },
+            {
+                type: 'geometric',
+                question: '組合圖形中左邊數字乘2，右邊數字加1，問號處是哪一組？',
+                shapes: [
+                    [{ shape: 'circle', color: 'blue', number: 1 }, { shape: 'square', color: 'yellow', number: 2 }],
+                    [{ shape: 'circle', color: 'blue', number: 2 }, { shape: 'square', color: 'yellow', number: 3 }],
+                    [{ shape: 'circle', color: 'blue', number: 4 }, { shape: 'square', color: 'yellow', number: 4 }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'blue', number: 5 }, { shape: 'square', color: 'yellow', number: 5 }],
+                    [{ shape: 'circle', color: 'blue', number: 8 }, { shape: 'square', color: 'yellow', number: 5 }],
+                    [{ shape: 'circle', color: 'blue', number: 6 }, { shape: 'square', color: 'yellow', number: 5 }],
+                    [{ shape: 'circle', color: 'blue', number: 8 }, { shape: 'square', color: 'yellow', number: 6 }]
+                ],
+                answerIndex: 1,
+                explanation: '左邊數字每次乘2:1→2→4→8，右邊數字每次加1:2→3→4→5，因此答案是數字8與5的組合。'
+            },
+            {
+                type: 'geometric',
+                question: '觀察星形數量遞減並依序旋轉45°，問號處是？',
+                shapes: [
+                    [{ shape: 'star', color: 'green', rotation: '0deg', count: 4 }],
+                    [{ shape: 'star', color: 'green', rotation: '45deg', count: 3 }],
+                    [{ shape: 'star', color: 'green', rotation: '90deg', count: 2 }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'star', color: 'green', rotation: '135deg', count: 1 }],
+                    [{ shape: 'star', color: 'green', rotation: '135deg', count: 2 }],
+                    [{ shape: 'star', color: 'green', rotation: '0deg', count: 1 }],
+                    [{ shape: 'star', color: 'yellow', rotation: '135deg', count: 1 }]
+                ],
+                answerIndex: 0,
+                explanation: '星形數量4→3→2→1遞減，同時旋轉角度0°→45°→90°→135°，故選擇旋轉135°、1個星形。'
+            },
+            {
+                type: 'geometric',
+                question: '顏色序列依藍、紅、綠循環，形狀依圓、方循環，問號處是？',
+                shapes: [
+                    [{ shape: 'circle', color: 'blue' }],
+                    [{ shape: 'square', color: 'red' }],
+                    [{ shape: 'circle', color: 'green' }],
+                    [{ shape: 'square', color: 'blue' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'red' }],
+                    [{ shape: 'square', color: 'red' }],
+                    [{ shape: 'circle', color: 'blue' }],
+                    [{ shape: 'square', color: 'green' }]
+                ],
+                answerIndex: 0,
+                explanation: '顏色藍→紅→綠循環，形狀圓→方循環，因此下一個是紅色圓形。'
+            },
+            {
+                type: 'geometric',
+                question: '左右兩圖形位置互換且顏色循環紅、藍、黃，問號處是哪一組？',
+                shapes: [
+                    [{ shape: 'square', color: 'red' }, { shape: 'circle', color: 'blue' }],
+                    [{ shape: 'circle', color: 'yellow' }, { shape: 'square', color: 'red' }],
+                    [{ shape: 'square', color: 'blue' }, { shape: 'circle', color: 'yellow' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'red' }, { shape: 'square', color: 'blue' }],
+                    [{ shape: 'circle', color: 'blue' }, { shape: 'square', color: 'yellow' }],
+                    [{ shape: 'square', color: 'yellow' }, { shape: 'circle', color: 'red' }],
+                    [{ shape: 'square', color: 'red' }, { shape: 'circle', color: 'blue' }]
+                ],
+                answerIndex: 2,
+                explanation: '圖形每次交換位置，顏色按紅→藍→黃循環，故下一組為黃方塊在左、紅圓在右。'
+            },
+            {
+                type: 'geometric',
+                question: '數字依次乘以3，形狀依圓、三角、方循環，問號處是？',
+                shapes: [
+                    [{ shape: 'circle', color: 'orange', number: 1 }],
+                    [{ shape: 'triangle', color: 'orange', number: 3 }],
+                    [{ shape: 'square', color: 'orange', number: 9 }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'orange', number: 27 }],
+                    [{ shape: 'triangle', color: 'orange', number: 27 }],
+                    [{ shape: 'square', color: 'orange', number: 27 }],
+                    [{ shape: 'star', color: 'orange', number: 27 }]
+                ],
+                answerIndex: 0,
+                explanation: '數字1→3→9→27 依次乘3，形狀圓→三角→方→圓循環，因此應是27的橘色圓形。'
+            },
+            {
+                type: 'geometric',
+                question: '圖形大小以大、中、小循環，數量依3、2、1遞減，問號處是哪個？',
+                shapes: [
+                    [{ shape: 'star', color: 'blue', size: 'large', count: 3 }],
+                    [{ shape: 'star', color: 'blue', size: 'medium', count: 2 }],
+                    [{ shape: 'star', color: 'blue', size: 'small', count: 1 }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'star', color: 'blue', size: 'large', count: 3 }],
+                    [{ shape: 'star', color: 'blue', size: 'medium', count: 2 }],
+                    [{ shape: 'star', color: 'blue', size: 'small', count: 1 }],
+                    [{ shape: 'circle', color: 'blue', size: 'large', count: 3 }]
+                ],
+                answerIndex: 0,
+                explanation: '大小大→中→小循環後回到大，數量3→2→1後回到3，因此應為3個大型藍色星形。'
+            },
+            {
+                type: 'geometric',
+                question: '觀察形狀依圓、方、三角、星循環，顏色依紫、綠、橘循環，問號處是？',
+                shapes: [
+                    [{ shape: 'circle', color: 'purple' }],
+                    [{ shape: 'square', color: 'green' }],
+                    [{ shape: 'triangle', color: 'orange' }],
+                    [{ shape: 'star', color: 'purple' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'green' }],
+                    [{ shape: 'square', color: 'orange' }],
+                    [{ shape: 'triangle', color: 'purple' }],
+                    [{ shape: 'star', color: 'green' }]
+                ],
+                answerIndex: 1,
+                explanation: '形狀圓→方→三角→星循環，顏色紫→綠→橘循環，下一個應是橘色方塊。'
+            },
+            {
+                type: 'geometric',
+                question: '雙圖形組中，左圖顏色依紅、藍、綠循環，右圖大小依小、中、大循環，問號處是哪一組？',
+                shapes: [
+                    [{ shape: 'circle', color: 'red' }, { shape: 'square', color: 'yellow', size: 'small' }],
+                    [{ shape: 'circle', color: 'blue' }, { shape: 'square', color: 'yellow', size: 'medium' }],
+                    [{ shape: 'circle', color: 'green' }, { shape: 'square', color: 'yellow', size: 'large' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'circle', color: 'red' }, { shape: 'square', color: 'yellow', size: 'small' }],
+                    [{ shape: 'circle', color: 'blue' }, { shape: 'square', color: 'yellow', size: 'large' }],
+                    [{ shape: 'circle', color: 'red' }, { shape: 'square', color: 'yellow', size: 'medium' }],
+                    [{ shape: 'circle', color: 'blue' }, { shape: 'square', color: 'yellow', size: 'medium' }]
+                ],
+                answerIndex: 0,
+                explanation: '左圖顏色紅→藍→綠循環後回到紅，右圖大小小→中→大循環後回到小，所以答案為紅圓與小黃方塊。'
+            },
+            {
+                type: 'geometric',
+                question: '三角形旋轉角度遞增60°並依顏色藍、黃交替，問號處是？',
+                shapes: [
+                    [{ shape: 'triangle', color: 'blue', rotation: '0deg' }],
+                    [{ shape: 'triangle', color: 'yellow', rotation: '60deg' }],
+                    [{ shape: 'triangle', color: 'blue', rotation: '120deg' }],
+                    [{ shape: 'triangle', color: 'yellow', rotation: '180deg' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'triangle', color: 'blue', rotation: '240deg' }],
+                    [{ shape: 'triangle', color: 'yellow', rotation: '240deg' }],
+                    [{ shape: 'triangle', color: 'blue', rotation: '300deg' }],
+                    [{ shape: 'triangle', color: 'yellow', rotation: '300deg' }]
+                ],
+                answerIndex: 0,
+                explanation: '角度0°→60°→120°→180°→240°遞增，顏色藍→黃→藍→黃→藍交替，故答案為240°藍色三角形。'
+            },
+            {
+                type: 'geometric',
+                question: '觀察兩圖交替出現的形狀與顏色配對，問號處是哪一個？',
+                shapes: [
+                    [{ shape: 'star', color: 'red' }],
+                    [{ shape: 'circle', color: 'green' }],
+                    [{ shape: 'star', color: 'blue' }],
+                    [{ shape: 'circle', color: 'yellow' }],
+                    '?'
+                ],
+                options: [
+                    [{ shape: 'star', color: 'purple' }],
+                    [{ shape: 'circle', color: 'red' }],
+                    [{ shape: 'star', color: 'orange' }],
+                    [{ shape: 'circle', color: 'blue' }]
+                ],
+                answerIndex: 2,
+                explanation: '形狀星→圓交替，顏色依紅→綠→藍→黃→橙序，因此下一個是橘色星形。'
+            },
+        ];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const totalQuestions = questions.length;
+        let selectedOption = null; // 用來儲存被點擊的選項按鈕，方便樣式處理
+
+        const progressBar = document.getElementById('progressBar');
+        const questionText = document.getElementById('questionText');
+        const shapesDisplay = document.getElementById('shapesDisplay');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const gameScreen = document.getElementById('game-screen');
+        const resultPage = document.getElementById('result-page');
+        const resultMessage = document.getElementById('resultMessage');
+
+        // 繪製圖形
+        function createShapeElement(shapeData) {
+            const shapeDiv = document.createElement('div');
+            shapeDiv.classList.add('shape', shapeData.shape, shapeData.color);
+
+            // 處理三角形和星形的特殊CSS
+            if (shapeData.shape === 'triangle') {
+                 // 三角形已經在CSS中處理了 border-bottom-color
+            } else if (shapeData.shape === 'star') {
+                // 星形已經在CSS中處理了 before 偽元素
+            }
+
+            // 處理旋轉
+            if (shapeData.rotation) {
+                shapeDiv.style.transform = `rotate(${shapeData.rotation})`;
+            }
+
+            // 處理大小
+            if (shapeData.size === 'small') {
+                shapeDiv.style.width = '40px';
+                shapeDiv.style.height = '40px';
+                if (shapeData.shape === 'triangle') {
+                    shapeDiv.style.borderLeft = '20px solid transparent';
+                    shapeDiv.style.borderRight = '20px solid transparent';
+                    shapeDiv.style.borderBottom = `40px solid ${shapeData.color}`;
+                }
+                 if (shapeData.shape === 'star') {
+                    shapeDiv.style.borderLeft = '20px solid transparent';
+                    shapeDiv.style.borderRight = '20px solid transparent';
+                    shapeDiv.style.borderBottom = `40px solid ${shapeData.color}`;
+                    shapeDiv.style.transform = 'rotate(35deg)'; // 重置旋轉
+                    shapeDiv.style.left = '-20px';
+                    shapeDiv.style.top = '0';
+                    const before = document.createElement('style');
+                    before.innerHTML = `.shape.star.small:before { border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid ${shapeData.color}; transform-origin: 20px 20px; }`;
+                    document.head.appendChild(before);
+                }
+
+            } else if (shapeData.size === 'medium') {
+                shapeDiv.style.width = '50px';
+                shapeDiv.style.height = '50px';
+                 if (shapeData.shape === 'triangle') {
+                    shapeDiv.style.borderLeft = '25px solid transparent';
+                    shapeDiv.style.borderRight = '25px solid transparent';
+                    shapeDiv.style.borderBottom = `50px solid ${shapeData.color}`;
+                }
+                 if (shapeData.shape === 'star') {
+                    shapeDiv.style.borderLeft = '25px solid transparent';
+                    shapeDiv.style.borderRight = '25px solid transparent';
+                    shapeDiv.style.borderBottom = `50px solid ${shapeData.color}`;
+                    shapeDiv.style.transform = 'rotate(35deg)'; // 重置旋轉
+                     const before = document.createElement('style');
+                    before.innerHTML = `.shape.star.medium:before { border-left: 25px solid transparent; border-right: 25px solid transparent; border-top: 50px solid ${shapeData.color}; transform-origin: 25px 25px; }`;
+                    document.head.appendChild(before);
+                }
+            } else if (shapeData.size === 'large') {
+                shapeDiv.style.width = '70px';
+                shapeDiv.style.height = '70px';
+                 if (shapeData.shape === 'triangle') {
+                    shapeDiv.style.borderLeft = '35px solid transparent';
+                    shapeDiv.style.borderRight = '35px solid transparent';
+                    shapeDiv.style.borderBottom = `70px solid ${shapeData.color}`;
+                }
+                 if (shapeData.shape === 'star') {
+                    shapeDiv.style.borderLeft = '35px solid transparent';
+                    shapeDiv.style.borderRight = '35px solid transparent';
+                    shapeDiv.style.borderBottom = `70px solid ${shapeData.color}`;
+                    shapeDiv.style.transform = 'rotate(35deg)'; // 重置旋轉
+                     const before = document.createElement('style');
+                    before.innerHTML = `.shape.star.large:before { border-left: 35px solid transparent; border-right: 35px solid transparent; border-top: 70px solid ${shapeData.color}; transform-origin: 35px 35px; }`;
+                    document.head.appendChild(before);
+                }
+            }
+
+
+            // 顯示數字
+            if (shapeData.number !== undefined) {
+                const numberSpan = document.createElement('span');
+                numberSpan.textContent = shapeData.number;
+                shapeDiv.appendChild(numberSpan);
+                shapeDiv.style.display = 'flex';
+                shapeDiv.style.justifyContent = 'center';
+                shapeDiv.style.alignItems = 'center';
+                shapeDiv.style.color = 'white';
+                shapeDiv.style.fontSize = '1.5em';
+                shapeDiv.style.fontWeight = 'bold';
+            }
+
+            return shapeDiv;
+        }
+
+        // 顯示圖形組
+        function displayShapeGroup(parentEl, shapes, isQuestionMark = false) {
+            const groupDiv = document.createElement('div');
+            groupDiv.classList.add('shape-group');
+
+            if (isQuestionMark) {
+                const questionMark = document.createElement('span');
+                questionMark.textContent = '?';
+                questionMark.style.fontSize = '4em';
+                questionMark.style.fontWeight = 'bold';
+                questionMark.style.color = '#ff6347';
+                groupDiv.appendChild(questionMark);
+            } else {
+                if (Array.isArray(shapes)) { // 如果是多個圖形組成一組
+                    shapes.forEach(shapeData => {
+                         // 如果有 count 屬性，表示要重複顯示圖形
+                        if (shapeData.count !== undefined) {
+                            for (let i = 0; i < shapeData.count; i++) {
+                                groupDiv.appendChild(createShapeElement(shapeData));
+                            }
+                        } else {
+                            groupDiv.appendChild(createShapeElement(shapeData));
+                        }
+                    });
+                } else if (typeof shapes === 'object') { // 如果是單個圖形
+                     if (shapes.count !== undefined) {
+                        for (let i = 0; i < shapes.count; i++) {
+                            groupDiv.appendChild(createShapeElement(shapes));
+                        }
+                    } else {
+                        groupDiv.appendChild(createShapeElement(shapes));
+                    }
+                }
+            }
+            parentEl.appendChild(groupDiv);
+        }
+
+        // 加載題目
+        function loadQuestion() {
+            if (currentQuestionIndex >= totalQuestions) {
+                showResultPage();
+                return;
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.question;
+            shapesDisplay.innerHTML = ''; // 清空之前的圖形
+
+            // 顯示圖形規律
+            currentQuestion.shapes.forEach((item, index) => {
+                if (item === '?') {
+                    displayShapeGroup(shapesDisplay, null, true); // 顯示問號
+                } else {
+                    displayShapeGroup(shapesDisplay, item);
+                }
+                 // 在每組圖形之間添加加號或等號，除了最後一組和問號前
+                if (index < currentQuestion.shapes.length - 1 && currentQuestion.shapes[index + 1] !== '?') {
+                    const symbolSpan = document.createElement('span');
+                    symbolSpan.classList.add('math-symbol');
+                    symbolSpan.textContent = '→';
+                    shapesDisplay.appendChild(symbolSpan);
+                } else if (index < currentQuestion.shapes.length - 1 && currentQuestion.shapes[index + 1] === '?') {
+                     const symbolSpan = document.createElement('span');
+                    symbolSpan.classList.add('math-symbol');
+                    symbolSpan.textContent = '= ?';
+                    shapesDisplay.appendChild(symbolSpan);
+                }
+            });
+
+
+            optionsContainer.innerHTML = ''; // 清空之前的選項
+            feedbackMessage.textContent = ''; // 清空回饋訊息
+            feedbackMessage.className = 'feedback-message'; // 重置樣式
+            selectedOption = null; // 重置選中的選項
+
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                button.dataset.index = index;
+                button.onclick = () => checkAnswer(index);
+
+                // 為選項按鈕內顯示圖形或文字
+                const optionContentDiv = document.createElement('div');
+                optionContentDiv.style.display = 'flex';
+                optionContentDiv.style.justifyContent = 'center';
+                optionContentDiv.style.alignItems = 'center';
+                optionContentDiv.style.gap = '5px';
+
+                if (Array.isArray(option)) {
+                     option.forEach(shapeData => {
+                        if (shapeData.count !== undefined) {
+                            for (let i = 0; i < shapeData.count; i++) {
+                                optionContentDiv.appendChild(createShapeElement(shapeData));
+                            }
+                        } else {
+                            optionContentDiv.appendChild(createShapeElement(shapeData));
+                        }
+                    });
+                } else if (typeof option === 'object') {
+                     if (option.count !== undefined) {
+                        for (let i = 0; i < option.count; i++) {
+                            optionContentDiv.appendChild(createShapeElement(option));
+                        }
+                    } else {
+                        optionContentDiv.appendChild(createShapeElement(option));
+                    }
+                } else {
+                    optionContentDiv.textContent = option;
+                }
+
+                button.appendChild(optionContentDiv);
+                optionsContainer.appendChild(button);
+            });
+
+            updateProgressBar();
+        }
+
+        // 檢查答案
+        function checkAnswer(selectedIndex) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = (selectedIndex === currentQuestion.answerIndex);
+
+            // 禁用所有按鈕防止重複點擊
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                // 標記選中的按鈕
+                if (parseInt(button.dataset.index) === selectedIndex) {
+                    selectedOption = button;
+                }
+            });
+
+            if (isCorrect) {
+                score++;
+                feedbackMessage.textContent = '答對了！' + (currentQuestion.explanation ? ' ' + currentQuestion.explanation : '');
+                feedbackMessage.classList.add('correct');
+                feedbackMessage.classList.remove('incorrect');
+                playCelebrationAnimation();
+            } else {
+                feedbackMessage.textContent = '答錯了，再想想看喔！' + (currentQuestion.explanation ? ' ' + currentQuestion.explanation : '');
+                feedbackMessage.classList.add('incorrect');
+                feedbackMessage.classList.remove('correct');
+                // 顯示正確答案
+                const correctOptionButton = optionsContainer.querySelector(`[data-index="${currentQuestion.answerIndex}"]`);
+                if (correctOptionButton) {
+                    correctOptionButton.style.border = '3px solid #28a745'; // 正確答案邊框
+                    correctOptionButton.style.boxShadow = '0 0 15px rgba(40, 167, 69, 0.5)';
+                }
+            }
+
+            // 選中的按鈕添加樣式
+            if (selectedOption) {
+                 if (isCorrect) {
+                    selectedOption.style.backgroundColor = '#28a745'; // 成功綠
+                    selectedOption.style.transform = 'scale(1.05)';
+                } else {
+                    selectedOption.style.backgroundColor = '#dc3545'; // 錯誤紅
+                    selectedOption.style.transform = 'scale(1.05)';
+                }
+            }
+
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 3000); // 3秒後進入下一題
+        }
+
+        // 更新進度條
+        function updateProgressBar() {
+            const progress = (currentQuestionIndex / totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${currentQuestionIndex}/${totalQuestions}`;
+            if (currentQuestionIndex === totalQuestions) {
+                progressBar.textContent = `完成！`;
+            }
+        }
+
+        // 慶祝動畫
+        function playCelebrationAnimation() {
+            const animationContainer = document.createElement('div');
+            animationContainer.classList.add('celebration-animation');
+            document.body.appendChild(animationContainer);
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`; // 隨機顏色
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.animationDuration = `${2 + Math.random() * 1}s`;
+                animationContainer.appendChild(confetti);
+            }
+
+            setTimeout(() => {
+                animationContainer.remove();
+            }, 2500); // 動畫結束後移除
+        }
+
+        // 顯示結果頁面
+        function showResultPage() {
+            gameScreen.style.display = 'none';
+            resultPage.style.display = 'block';
+            let message = '';
+            if (score === totalQuestions) {
+                message = `太棒了！你答對了所有 ${totalQuestions} 題！你是個超級規則探險家！`;
+            } else if (score >= totalQuestions / 2) {
+                message = `表現不錯！你答對了 ${score} 題中的 ${totalQuestions} 題。繼續努力，你會更棒的！`;
+            } else {
+                message = `你答對了 ${score} 題中的 ${totalQuestions} 題。沒關係，多練習幾次，你會越來越厲害的！`;
+            }
+            resultMessage.textContent = message;
+        }
+
+        // 重新開始遊戲
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultPage.style.display = 'none';
+            gameScreen.style.display = 'block';
+            loadQuestion();
+        }
+
+        // 遊戲開始
+        document.addEventListener('DOMContentLoaded', loadQuestion);
+    </script>
+</body>
+</html>
