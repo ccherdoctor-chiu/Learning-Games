@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>迷宮遊戲 - 適合7歲小孩</title>
+  <!-- 引入外部樣式表 -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 頁面上方的標題與說明 -->
+  <header class="header">
+    <h1>迷宮冒險</h1>
+    <p>用方向鍵（↑ ↓ ← →）帶領小角色走出迷宮吧！</p>
+  </header>
+<div class="game-container">
+    <div id="maze" class="maze"></div>
+    <div class="info-panel">
+      <div class="level-display">關卡：<span id="current-level">1</span></div>
+      <div id="message" class="message">請使用方向鍵開始遊戲</div>
+      <div class="steps-counter">步數：<span id="steps">0</span></div>
+      <button id="reset-button" class="reset-button">重新開始</button>
+    </div>
+  </div>
+ <div class="level-select">
+  <label for="level-select">選擇關卡：</label>
+  <select id="level-select">
+    <!-- 自動生成 1~30 的選項 -->
+    <!-- <option value="0">1</option> ... -->
+  </select>
+  <button id="start-level">開始</button>
+</div>
+  <script src="script.js"></script>
+</body>
+</html>
